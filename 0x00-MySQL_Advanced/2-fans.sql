@@ -7,4 +7,4 @@ FROM
 GROUP BY
     origin
 ORDER BY
-    nb_fans DESC LIMIT 9;
+    nb_fans DESC;
