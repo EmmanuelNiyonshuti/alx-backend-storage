@@ -9,5 +9,7 @@ def update_topics(mongo_collection, name, topics):
         mongo_collection - a collection object.
         name (str) - a school name to update.
         topics (list) - list of topics approached in the school.
+    Return:
+        Nothing.
     """
-    mongo_collection.update({ "name": name }, {"$set": { "topics": topics } })
+    mongo_collection.update_one({ "name": name }, { "$set": { "topics": topics } })
