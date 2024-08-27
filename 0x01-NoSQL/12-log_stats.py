@@ -20,7 +20,7 @@ methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
 print("Methods:")
 for method in methods:
     count = collection.count_documents({"method": method})
-    print(f"\tMethod {method}: {count}")
+    print(f"\tmethod {method}: {count}")
 
 # Get and print the number of documents
 # with method 'GET' and path '/status'
