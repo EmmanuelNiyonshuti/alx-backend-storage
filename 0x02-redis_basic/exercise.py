@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-implements Cache class with a decorator.
+implements Cache class with decorators.
 """
 import redis
 import uuid
@@ -8,20 +8,20 @@ from typing import Union, Callable, Optional
 from functools import wraps
 
 
-def count_calls(origin_func: Callable) -> Callable:
-    # decorator that counts how many times a method is called.
+def count_calls(origin_func):
+    """ decorator that counts how many times a method is called. """
     @wraps(origin_func)
     def wrapper(self, *args, **kwargs):
+        """ wrapped function """
         key = origin_func.__qualname__
         self._redis.incr(key)
         return origin_func(self, *args, **kwargs)
     return wrapper
 
 
+
 class Cache:
-    """
-    Cache class.
-    """
+    """ Cache class. """
     def __init__(self):
         self._redis = redis.Redis()
         self._redis.flushdb()
