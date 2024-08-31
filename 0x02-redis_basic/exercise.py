@@ -3,7 +3,6 @@
 implements Cache class with a decorator.
 """
 import redis
-import random
 import uuid
 from typing import Union, Callable, Optional
 from functools import wraps
