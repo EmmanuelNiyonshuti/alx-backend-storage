@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 """
-implements Cache class
+implements Cache class with a decorator.
 """
 import redis
 import random
 import uuid
 from typing import Union, Callable, Optional
+from functools import wraps
+
+
+def count_calls(origin_func: Callable) -> Callable:
+    # decorator that counts how many times a method is called.
+    @wraps(origin_func)
+    def wrapper(self, *args, **kwargs):
+        key = origin_func.__qualname__
+        self._redis.incr(key)
+        return origin_func(self, *args, **kwargs)
+    return wrapper
 
 
 class Cache:
@@ -16,9 +27,11 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
-        Generates a rondom uuid4 str and store the input data on Redis.
+        Generates a random uuid4 str and use it as a key
+        to store the input data in Redis.
         Args:
             data - data to be stored in the database.
         Return:
@@ -47,28 +60,33 @@ class Cache:
 
     def get_str(self, key=str) -> str:
         """
-        Retrieve a string from Redis.
+        Retrieves a string value from the Redis cache.
+
+        This method uses the Cache.get method with a UTF-8 decode function.
+        It's designed to work with keys that were stored as strings.
 
         Args:
-            key (str): The key to retrieve from Redis.
+            key (str): The key to retrieve the value for.
 
         Returns:
-            str: The retrieved data as a UTF-8 string,
+            Optional[str]: The retrieved data as a string,
             or None if the key doesn't exist.
         """
-        def decodeutf8(data: bytes) -> str:
-            return data.decode("utf-8")
+        def decodeutf8(value: bytes) -> str:
+            return value.decode("utf-8")
         return self.get(key, fn=decodeutf8)
 
     def get_int(self, key=int) -> int:
         """
-        Retrieve an integer from Redis.
+        Retrieves an integer value from the Redis cache.
+        This method uses the Cache.get method with int
+        as the conversion function.
+        It's designed to work with keys that were stored as integers.
 
         Args:
-            key (str): The key to retrieve from Redis.
-
+            key (str): The key to retrieve the value for.
         Returns:
-            int: The retrieved data as an integer,
+            Optional[int]: The retrieved data as an integer,
             or None if the key doesn't exist.
         """
         return self.get(key, fn=int)
