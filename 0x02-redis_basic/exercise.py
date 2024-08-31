@@ -34,7 +34,7 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(method):
+def replay(method: Callable) -> None:
     """ display the history of calls of a particular function"""
     name = method.__qualname__
     client = redis.Redis()
