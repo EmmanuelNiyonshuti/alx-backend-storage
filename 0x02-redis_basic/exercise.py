@@ -34,12 +34,12 @@ def call_history(method: Callable) -> Callable:
     return wrapper
 
 
-def replay(method: Callable) -> None:
+def replay(method):
     """ display the history of calls of a particular function"""
     name = method.__qualname__
     client = redis.Redis()
     call_counts = client.get(name).decode("utf-8")
-    print(f"{name} was called {call_counts} times")
+    print(f"{name} was called {call_counts} times:")
     inputs = client.lrange(f"{name}:inputs", 0, -1)
     outputs = client.lrange(f"{name}:outputs", 0, -1)
     for input_args, output_args in zip(inputs, outputs):
